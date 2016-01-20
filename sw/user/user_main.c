@@ -21,9 +21,9 @@ void ev_handler(struct mg_connection *nc, int ev, void *p) {
   static const char *reply_fmt =
       "HTTP/1.0 200 OK\r\n"
       "Connection: close\r\n"
-      "Content-Type: text/plain\r\n"
+      "Content-Type: text/html\r\n"
       "\r\n"
-      "Hello %s\n";
+      "%s%s%s\n";
   LOG(LL_DEBUG, ("conn %p ev %d", nc, ev));
 
   switch (ev) {
@@ -42,7 +42,10 @@ void ev_handler(struct mg_connection *nc, int ev, void *p) {
       LOG(LL_INFO,
           ("HTTP request from %s: %.*s %.*s", addr, (int) hm->method.len,
            hm->method.p, (int) hm->uri.len, hm->uri.p));
-      mg_printf(nc, reply_fmt, addr);
+      // mg_printf(nc, reply_fmt, addr);
+      mg_printf(nc, reply_fmt, "<!DOCTYPE html><html><head><title>Here's the title</title></head>"
+              "<body><h1>Espressif Chip</h1><blockquote><p>Your address for this thing is: ",
+              addr, "</p></blockquote></body></html>");
       nc->flags |= MG_F_SEND_AND_CLOSE;
       break;
     }
